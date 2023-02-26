@@ -4,64 +4,46 @@ import org.junit.Test;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import pages.MainPage;
 
-
+@RunWith(Parameterized.class)
 public class MainPageTest {
 
     private WebDriver driver;
+    private final int questionId;
+
+    public MainPageTest(int questionId) {
+        this.questionId = questionId;
+    }
+
+    @Parameterized.Parameters
+    public static Object[][] getMainPageTestData() {
+        return new Object[][] {
+                {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}
+        };
+    }
 
     @Test
     public void isAnswerVisibleAfterClickOnQuestion() {
 
         driver = AppConfig.getBrowser();
         driver.get(AppConfig.MAIN_PAGE_URL);
-
         MainPage page = new MainPage(driver);
 
-        //получаем количество вопросов в списке "Вопросы о важном"
-        int faqQuestionsCount = page.getFaqQuestionsCount();
+        //передаем id в локатор вопроса и ответа
+        page.setFaqQuestionId(questionId);
 
-        //тестируем каждый вопрос
-        for (int i=0; i<faqQuestionsCount; i++) {
-            //передаем id в локатор вопроса и ответа
-            page.setFaqQuestionId(i);
+        //делаем клик по вопросу
+        page.faqQuestionClick();
 
-            //делаем клик по вопросу
-            page.faqQuestionClick();
+        //проверяем, что ответ отображается
+        assertTrue("После нажатия на вопрос не отображается ответ "+questionId, page.isFaqAnswerDisplayed());
 
-            //проверяем, что ответ отображается
-            assertTrue("После нажатия на вопрос не отображается ответ "+i, page.isFaqAnswerDisplayed());
-        }
-    }
-
-    @Test
-    public void clickHeaderOrderButton() {
-
-        driver = AppConfig.getBrowser();
-        driver.get(AppConfig.MAIN_PAGE_URL);
-
-        //клик по кнопке заказа в хедере
-        new MainPage(driver).headerOrderButtonClick();
-
-        //проверяем, что url изменился
-        assertEquals("После нажатия на кнопку Заказать в хедере не открылась страница заказа", driver.getCurrentUrl(), AppConfig.NEW_ORDER_PAGE_URL);
-    }
-
-    @Test
-    public void clickFooterOrderButton() {
-
-        driver = AppConfig.getBrowser();
-        driver.get(AppConfig.MAIN_PAGE_URL);
-
-        //клик по кнопке заказа в футере
-        new MainPage(driver).footerOrderButtonClick();
-
-        //проверяем, что url изменился
-        assertEquals("После нажатия на кнопку Заказать в футере не открылась страница заказа", driver.getCurrentUrl(), AppConfig.NEW_ORDER_PAGE_URL);
     }
 
     @After

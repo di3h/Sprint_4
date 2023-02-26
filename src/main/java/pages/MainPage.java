@@ -11,9 +11,6 @@ import static junit.framework.Assert.assertTrue;
 public class MainPage {
     private WebDriver driver;
 
-    //Выпадающий список "Вопросы о важном"
-    private By faqQuestionsList = By.xpath(".//div[@class='Home_FAQ__3uVm4']//div[@class='accordion__item']");
-
     //Вопрос выпадающего списка "Вопросы о важном"
     private By faqQuestion;
 
@@ -31,10 +28,6 @@ public class MainPage {
         this.driver = driver;
     }
 
-    //получение количества вопросов в списке "Вопросы о важном"
-    public int getFaqQuestionsCount() {
-        return driver.findElements(faqQuestionsList).size();
-    }
 
     //установка id для локаторов вопроса и ответа
     public void setFaqQuestionId(int questionId) {

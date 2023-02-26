@@ -9,7 +9,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import pages.MainPage;
 import pages.NewOrderPage;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Parameterized.class)
 public class NewOrderPageTest {
@@ -24,9 +24,9 @@ public class NewOrderPageTest {
     private final String duration;
     private final String colour;
     private final String comment;
-    private final boolean isNewOrderCreated;
+    private final String OrderButtonType;
 
-    public NewOrderPageTest(String name, String surname, String address, String metro, String phone, String date, String duration, String colour, String comment, boolean isNewOrderCreated) {
+    public NewOrderPageTest(String name, String surname, String address, String metro, String phone, String date, String duration, String colour, String comment, String OrderButtonType) {
         this.name = name;
         this.surname = surname;
         this.address = address;
@@ -36,14 +36,14 @@ public class NewOrderPageTest {
         this.duration = duration;
         this.colour = colour;
         this.comment = comment;
-        this.isNewOrderCreated = isNewOrderCreated;
+        this.OrderButtonType = OrderButtonType;
     }
 
     @Parameterized.Parameters
-    public static Object[][] getTestData() {
+    public static Object[][] getNewOrderPageTestData() {
         return new Object[][] {
-                {"Иван", "Иванов", "Абрикосовая 1", "Бульвар Рокоссовского", "89991234567", "31.12.2023", "сутки", "чёрный жемчуг", "домофон не работает", true},
-                {"Пётр", "Петров", "Виноградная 2", "Черкизовская", "89997654321", "01.01.2024", "двое суток", "серая безысходность", "", true}
+                {"Иван", "Иванов", "Абрикосовая 1", "Бульвар Рокоссовского", "89991234567", "31.12.2023", "сутки", "чёрный жемчуг", "домофон не работает", "headerOrderButton"},
+                {"Пётр", "Петров", "Виноградная 2", "Черкизовская", "89997654321", "01.01.2024", "двое суток", "серая безысходность", "", "footerOrderButton"}
         };
     }
 
@@ -53,8 +53,12 @@ public class NewOrderPageTest {
         driver = AppConfig.getBrowser();
         driver.get(AppConfig.MAIN_PAGE_URL);
 
-        //клик по кнопке заказа в хедере
-        new MainPage(driver).headerOrderButtonClick();
+        //клик по кнопке заказа
+        if(OrderButtonType.equals("headerOrderButton")) {
+            new MainPage(driver).headerOrderButtonClick();
+        } else {
+            new MainPage(driver).footerOrderButtonClick();
+        }
 
         NewOrderPage page = new NewOrderPage(driver);
 
@@ -64,7 +68,7 @@ public class NewOrderPageTest {
         page.orderSubmitButtonClick();
         page.orderConfirmButtonClick();
 
-        assertEquals("Всплывающее окно с сообщением об успешном создании заказа не появилось", isNewOrderCreated, page.isSuccessOrderModalDisplayed());
+        assertTrue("Всплывающее окно с сообщением об успешном создании заказа не появилось", page.isSuccessOrderModalDisplayed());
     }
 
     @After
