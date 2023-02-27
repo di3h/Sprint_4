@@ -54,6 +54,12 @@ public class MainPage {
         return driver.findElement(faqAnswer).isDisplayed();
     }
 
+    //получение текста ответа
+    public String getFaqAnswerText() {
+        Assert.assertTrue(driver.findElement(faqAnswer).isEnabled());
+        return driver.findElement(faqAnswer).getText();
+    }
+
     //клик по кнопке Заказать в хедере
     public void headerOrderButtonClick() {
         //проверка, что кнопка кликабельна
